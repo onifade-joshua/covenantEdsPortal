@@ -40,7 +40,7 @@ function App() {
                 {step === 2 && (
                   <Payment student={student} onPaymentSuccess={handlePaymentSuccess} />
                 )}
-                {step === 3 && <Dashboard student={student} />}
+                {/* {step === 3 && <Dashboard student={student} />} */}
               </main>
             </>
           }
