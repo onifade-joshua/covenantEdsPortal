@@ -1,50 +1,107 @@
-import React from 'react';
-import recordPayment from '../../utils/recordPayment';
-import "./Payment.css";
+import React, { useState } from 'react';
+import emailjs from '@emailjs/browser';
+import AlertModal from '../AlertModal/AlertModal';
+import SubmitAlert from '../AlertModal/SubmitAlert';
+import './Payment.css'; // Import your CSS file for styling
 
-const Payment = ({ student, onPaymentSuccess }) => {
-  const handlePayment = () => {
-    const amount = 150000; // ₦1,500 in kobo
-    const reference = `CU-EDS-${Date.now()}`;
+const Payment = ({ student }) => {
+  const [form, setForm] = useState({
+    name: student.name || '',
+    email: student.email || '',
+    matric: student.matric || '',
+  });
 
-    window.MonnifySDK?.initialize({
-      amount: amount / 100,
-      currency: 'NGN',
-      reference,
-      customerName: student.name,
-      customerEmail: student.email,
-      apiKey: 'YOUR_MONNIFY_API_KEY',
-      contractCode: 'YOUR_CONTRACT_CODE',
-      paymentDescription: 'CU EDS Materials Access',
-      isTestMode: true,
-      onComplete: async function (response) {
-        if (response.paymentReference && response.paymentStatus === 'PAID') {
-          // Optional: Record payment
-          await recordPayment({
-            ...student,
-            reference: response.paymentReference,
-            amount: amount / 100,
-          });
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
-          onPaymentSuccess(); // Go to Step 3
-        } else {
-          alert('Payment not completed.');
-        }
-      },
-      onClose: function () {
-        alert('You closed the payment window.');
-      },
-    });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      setUploading(true);
+      setError('');
+
+      // Send email with student details to your inbox
+      const templateParams = {
+        name: form.name,
+        email: form.email,
+        matric: form.matric,
+      };
+
+      await emailjs.send(
+        'service_43gg1az',       // ✅ Your EmailJS Service ID
+        'template_gd1mlcl',      // ✅ Your Template ID
+        templateParams,
+        'DUwpHpX2m1EJDDFkk'      // ✅ Your Public Key
+      );
+
+      setUploading(false);
+      setShowAlert(true); // Show "Check your mail" alert
+    } catch (err) {
+      console.error('Submission error:', err);
+      setUploading(false);
+      setError('Something went wrong. Please try again.');
+    }
+  };
+
+  const closeModal = () => {
+    setShowAlert(false);
   };
 
   return (
     <div className="form-card">
-      <h2>Pay to Access Materials</h2>
-      <p><strong>Name:</strong> {student.name}</p>
-      <p><strong>Email:</strong> {student.email}</p>
-      <button className="btn-pay w-100" onClick={handlePayment}>
-        Pay ₦1,500 Now
-      </button>
+      <h2>Manual Bank Transfer Payment</h2>
+      <p>To complete your payment, transfer <strong>₦1,500</strong> to:</p>
+      
+      <ul>
+        {/* <li><strong>Account Name:</strong> Joshua Onifade</li> */}
+        <li><strong>Account Number:</strong> 6505699189</li>
+        <li><strong>Bank:</strong> Providus Bank</li>
+      </ul>
+
+      <p>After payment, fill in the details below:</p>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Matric Number"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Student Email Address"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          name="matric"
+          placeholder="Full Name (as on bank transfer)"
+          value={form.matric}
+          onChange={handleChange}
+          required
+        />
+
+        {error && <p className="error">{error}</p>}
+
+        <button type="submit" disabled={uploading}>
+          {uploading ? 'Submitting...' : 'Submit Payment Details'}
+        </button>
+      </form>
+
+      {showAlert && (
+        <SubmitAlert message="Your payment is being confirmed. While you wait, check your mail for the course material download URL." onClose={closeModal} />
+      )}
     </div>
   );
 };

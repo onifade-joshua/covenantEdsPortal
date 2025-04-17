@@ -18,7 +18,7 @@ const materials = [
 
 const Dashboard = () => (
   <div className="dashboard">
-    <div className="steps-bar">
+    {/* <div className="steps-bar">
       <div className="step completed">
         <span className="step-number">1</span>
         <span className="step-label">Fill Details</span>
@@ -31,7 +31,7 @@ const Dashboard = () => (
         <span className="step-number">3</span>
         <span className="step-label">Access Materials</span>
       </div>
-    </div>
+    </div> */}
 
     <h2 style={{ color: "purple", marginTop: "30px" }}>Download Materials</h2>
     <div className="materials">
