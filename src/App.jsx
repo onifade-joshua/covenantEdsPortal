@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import EmailForm from './components/Email/EmailForm';
 import Payment from './components/Payment/Payment';
-import Dashboard from './components/Dashboard/Dashboard';
+// import Dashboard from './components/Dashboard/Dashboard';
 import AlertModal from './components/AlertModal/AlertModal';
 import WizardSteps from './components/WizardSteps/WizardSteps';
 import './App.css';
@@ -15,7 +15,7 @@ function App() {
 
   const handlePaymentSuccess = () => {
     // When payment is successful, move the student to step 3 (Dashboard)
-    setStep(3);
+    setStep(2);
   };
 
   return (
