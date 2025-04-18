@@ -56,7 +56,7 @@ const Payment = ({ student }) => {
   return (
     <div className="form-card">
       <h2>Manual Bank Transfer Payment</h2>
-      <p>To complete your payment, transfer <strong>₦1,500</strong> to:</p>
+      <p>To complete your payment, transfer <strong>₦2,000</strong> to:</p>
       
       <ul>
         {/* <li><strong>Account Name:</strong> Joshua Onifade</li> */}
